@@ -7,6 +7,7 @@ import { cartRouter } from "./cartRoutes.js";
 import { wishlistRouter } from "./wishlistRoutes.js";
 import { reviewRouter } from "./reviewRoutes.js";
 import { orderRouter } from "./orderRoutes.js";
+import { adminRouter } from "./adminRoutes.js";
 const router=express.Router()
 
 router.get('/', (req, res) => {
@@ -19,7 +20,7 @@ router.use("/user",userRouter)
 //seller
 router.use("/seller",sellerRouter)
 //admin
-
+router.use("/admin",adminRouter)
 //order
 router.use( "/order",orderRouter);
 //products

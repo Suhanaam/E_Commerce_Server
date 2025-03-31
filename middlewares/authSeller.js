@@ -6,7 +6,7 @@ export const authSeller = (req, res, next) => {
         const { token } = req.cookies;
 
         if (!token) {
-            return res.status(401).json({ message: "User not authorized" });
+            return res.status(401).json({ message: "seller not authorized" });
         }
 
         // Decode token

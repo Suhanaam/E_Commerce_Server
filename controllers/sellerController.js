@@ -1,6 +1,8 @@
 import { Seller } from "../models/sellerModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.js";
+import { cloudinaryInstance } from "../config/cloudinary.js";
+
 
 export const sellerSignup = async (req, res) => {
   try {
@@ -20,7 +22,9 @@ export const sellerSignup = async (req, res) => {
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
-    const newSeller = new Seller({ name, email, password: hashedPassword, mobile, profilePic });
+    const cloudinaryRes=await cloudinaryInstance.uploader.upload(req.file.path)
+         console.log("cloudinary response====",cloudinaryRes);
+    const newSeller = new Seller({ name, email, password: hashedPassword, mobile, profilePic:cloudinaryRes.url });
     await newSeller.save();
 
     const token = generateToken(newSeller.id, "seller");
@@ -33,6 +37,7 @@ export const sellerSignup = async (req, res) => {
 
 export const sellerLogin = async (req, res) => {
   try {
+    console.log("keeri vaaa");
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -52,6 +57,7 @@ export const sellerLogin = async (req, res) => {
     if (!seller.isActive) {
       return res.status(403).json({ message: "Seller account is not active" });
     }
+    
 
     const token = generateToken(seller._id, "seller");
     res.cookie("token", token);
@@ -92,4 +98,14 @@ export const sellerUpdate = async (req, res) => {
 export const sellerLogout = (req, res) => {
   res.clearCookie("token");
   res.json({ message: "Seller logged out successfully" });
+};
+
+
+export const getAllSellers = async (req, res) => {
+  try {
+    const sellers = await Seller.find().select("-password"); // Exclude password field
+    res.json({ data: sellers, message: "All sellers fetched successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
 };

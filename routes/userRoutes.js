@@ -2,7 +2,7 @@ import e from "express";//default import
 import { changePassword, CheckUser, deactivateUser, deleteUser, forgotPassword, updateAddress, userLogin, userLogout, userProfile, userProfileUpdate, userSignup} from "../controllers/userController.js";
 import { authUser } from "../middlewares/authUser.js";
 import { authAdmin } from "../middlewares/authAdmin.js";
-
+import { upload } from "../middlewares/multer.js";
 const router=e.Router();
 
 router.get('/', (req, res) => {
@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 
 
 //signup
-router.post("/signup",userSignup);
+router.post("/signup",upload.single("Userimage"),userSignup);
 //login
 router.put("/login",userLogin);
 //profile

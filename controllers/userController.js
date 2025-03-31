@@ -1,9 +1,13 @@
 import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.js";
+import { cloudinaryInstance } from "../config/cloudinary.js";
+
 export const userSignup=async(req,res,next)=>{
     try {
         console.log('sign in ');
+        console.log("Request Body:", req.body);
+        console.log("Uploaded File:", req.file);
        // res.send('Hello World4!');
         //res.json({message:"signup success"})
 
@@ -29,6 +33,10 @@ export const userSignup=async(req,res,next)=>{
             return res.status(400).json({message:"user already exist"})
         }
 
+         const cloudinaryRes=await cloudinaryInstance.uploader.upload(req.file.path)
+         console.log("cloudinary response====",cloudinaryRes);
+        
+
         //compare with confirm password
         if(password!==confirmPassword)
         {
@@ -38,7 +46,7 @@ export const userSignup=async(req,res,next)=>{
 
         //password hashing
         const hashedPassword = bcrypt.hashSync(password, 10);
-        const newUser= new User({name,email,password:hashedPassword,mobile,profilePic});
+        const newUser= new User({name,email,password:hashedPassword,mobile,profilePic:cloudinaryRes.url});
         await newUser.save()
 
 
@@ -66,13 +74,13 @@ export const userLogin=async(req,res,next)=>{
     try {
        
          //collect user data
-         const {email,password,confirmPassword}=req.body;
+         const {email,password}=req.body;
 
 
 
          // data validation
  
-         if(!email||!password||!confirmPassword)
+         if(!email||!password)
              {
              return res.status(400).json({message:"all fields are required"});
  
@@ -100,6 +108,7 @@ export const userLogin=async(req,res,next)=>{
        //token
        const token=generateToken(userExist._id,"user");
        res.cookie('token',token);
+       console.log("login success");
 
        //DELETE PASSWORD FROM OBJRECT RESPONSE:
 
@@ -110,7 +119,10 @@ export const userLogin=async(req,res,next)=>{
     //    }
 
        delete userExist._doc.password;
+       console.log("login success");
        res.json({data:userExist,message:"login success"})
+       console.log("login success");
+       console.log(userExist.name);
 
        
 
