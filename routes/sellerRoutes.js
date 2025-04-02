@@ -5,6 +5,7 @@ import {
   sellerProfile,
   sellerUpdate,
   sellerLogout,
+  getAllSellers,
 } from "../controllers/sellerController.js";
 import { authSeller } from "../middlewares/authSeller.js";
 import { upload } from "../middlewares/multer.js";
@@ -21,5 +22,7 @@ router.get("/profile", authSeller, sellerProfile);
 router.put("/update", authSeller, sellerUpdate);
 //logut
 router.get("/logout", sellerLogout);
+//get all sellers
+router.get("/AllSellers",getAllSellers)
 
 export { router as sellerRouter };
