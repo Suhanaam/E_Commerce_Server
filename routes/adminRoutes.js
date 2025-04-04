@@ -7,7 +7,8 @@ import {
     getAllSellers,
     getAllOrders,
     deleteUser,
-    deleteSeller
+    deleteSeller,
+    getAdminProfile
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -19,7 +20,7 @@ router.get("/sellers", authAdmin, getAllSellers);
 router.get("/orders", authAdmin, getAllOrders);
 router.delete("/users/:userId", authAdmin, deleteUser);
 router.delete("/sellers/:sellerId", authAdmin, deleteSeller);
-
+router.get("/profile",getAdminProfile);
 
 
 export { router as adminRouter };

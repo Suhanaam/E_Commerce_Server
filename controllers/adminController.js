@@ -110,3 +110,18 @@ export const deleteSeller = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const getAdminProfile = async (req, res) => {
+    try {
+        const adminId = req.user.id; // set by auth middleware
+
+        const admin = await Admin.findById(adminId).select("-password"); // exclude password
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found." });
+        }
+
+        res.status(200).json({ success: true, data: admin });
+    } catch (error) {
+        console.error("Error fetching admin profile:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+};
