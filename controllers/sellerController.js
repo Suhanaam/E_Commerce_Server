@@ -2,6 +2,7 @@ import { Seller } from "../models/sellerModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.js";
 import { cloudinaryInstance } from "../config/cloudinary.js";
+const NODE_ENV=process.env.NODE_ENV
 
 
 export const sellerSignup = async (req, res) => {
@@ -58,9 +59,22 @@ export const sellerLogin = async (req, res) => {
       return res.status(403).json({ message: "Seller account is not active" });
     }
     
+    
+
+
 
     const token = generateToken(seller._id, "seller");
-    res.cookie("token", token);
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: true, // Use true in production with HTTPS
+    //   sameSite: "None", // Important if frontend & backend are on different domains
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // });
+    res.cookie('token',token,{
+      sameSite:NODE_ENV==="production"?"none":"Lax",
+      secure:NODE_ENV==="production",
+      httpOnly:NODE_ENV==="production",
+     });
     delete seller._doc.password;
     res.json({ data: seller, message: "Login successful" });
   } catch (error) {
