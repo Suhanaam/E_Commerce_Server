@@ -2,7 +2,7 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.js";
 import { cloudinaryInstance } from "../config/cloudinary.js";
-
+const NODE_ENV=process.env.NODE_ENV
 export const userSignup=async(req,res,next)=>{
     try {
         console.log('sign in ');
@@ -107,7 +107,11 @@ export const userLogin=async(req,res,next)=>{
 
        //token
        const token=generateToken(userExist._id,"user");
-       res.cookie('token',token);
+       res.cookie('token',token,{
+        sameSite:NODE_ENV==="production"?"none":"Lax",
+        secure:NODE_ENV==="production",
+        httpOnly:NODE_ENV==="production",
+       });
        console.log("login success");
 
        //DELETE PASSWORD FROM OBJRECT RESPONSE:

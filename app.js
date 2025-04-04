@@ -15,7 +15,7 @@ const app = express();
 const port = process.env.PORT;
 app.use(
   cors({
-    origin: "https://e-commerce-client-rayan.onrender.com", // Allow only your frontend domain
+    origin: ["http://localhost:5173","https://e-commerce-client-rayan.onrender.com"], // Allow only your frontend domain
     credentials: true, // Enable cookies/authentication
     methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allow custom headers
