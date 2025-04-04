@@ -20,7 +20,7 @@ router.get("/sellers", authAdmin, getAllSellers);
 router.get("/orders", authAdmin, getAllOrders);
 router.delete("/users/:userId", authAdmin, deleteUser);
 router.delete("/sellers/:sellerId", authAdmin, deleteSeller);
-router.get("/profile",getAdminProfile);
+router.get("/profile",authAdmin,getAdminProfile);
 
 
 export { router as adminRouter };
