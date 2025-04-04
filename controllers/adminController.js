@@ -4,6 +4,8 @@ import { Seller } from "../models/sellerModel.js";
 import { Order } from "../models/orderModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+const NODE_ENV=process.env.NODE_ENV
+
 
 // Admin Registration
 export const registerAdmin = async (req, res) => {
