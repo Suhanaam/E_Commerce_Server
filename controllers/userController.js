@@ -53,7 +53,11 @@ export const userSignup=async(req,res,next)=>{
         
         //generate token using id and role
        const token=generateToken(newUser.id,"user");
-       res.cookie('token',token);
+       res.cookie('token',token,{
+        sameSite:NODE_ENV==="production"?"none":"Lax",
+        secure:NODE_ENV==="production",
+        httpOnly:NODE_ENV==="production",
+       });
        res.json({data:newUser,message:"signup accessed"})
 
 
@@ -188,7 +192,12 @@ export const userProfileUpdate=async(req,res,next)=>{
 export const userLogout=async(req,res,next)=>{
     try {
 
-        res.clearCookie("token");
+        res.clearCookie("token",{
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
+
         res.json({message:"user logout success"});
    
         

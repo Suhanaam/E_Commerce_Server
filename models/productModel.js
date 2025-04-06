@@ -27,7 +27,7 @@ const productSchema = new Schema(
         },
         images: {
             type: [String],
-            default: ["https://via.placeholder.com/150"],
+            default: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaLGtEd0MJro4X9wDmT2vrvLT-HjKkyyWVmg&s"],
         },
         seller: {
             type: mongoose.Schema.Types.ObjectId,
