@@ -24,9 +24,10 @@ export const createProduct = async (req, res) => {
             price,
             stock,
             category,
-            images: cloudinaryRes.url,
+            images: cloudinaryRes.secure_url,
             seller: req.user.id,
         });
+       
         await newProduct.save();
         res.json({ data: newProduct, message: "Product created successfully" });
     } catch (error) {
