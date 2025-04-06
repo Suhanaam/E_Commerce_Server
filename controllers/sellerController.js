@@ -110,7 +110,12 @@ export const sellerUpdate = async (req, res) => {
 };
 
 export const sellerLogout = (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token",{
+    sameSite: NODE_ENV === "production" ? "None" : "Lax",
+    secure: NODE_ENV === "production",
+    httpOnly: NODE_ENV === "production",
+});
+
   res.json({ message: "Seller logged out successfully" });
 };
 
