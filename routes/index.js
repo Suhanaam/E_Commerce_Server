@@ -8,6 +8,7 @@ import { wishlistRouter } from "./wishlistRoutes.js";
 import { reviewRouter } from "./reviewRoutes.js";
 import { orderRouter } from "./orderRoutes.js";
 import { adminRouter } from "./adminRoutes.js";
+import { paymentRouter } from "./paymentRoutes.js";
 const router=express.Router()
 
 router.get('/', (req, res) => {
@@ -31,5 +32,7 @@ router.use("/cart", cartRouter);
 router.use("/wishlist",wishlistRouter);
 //REVIEW
 router.use("/review",reviewRouter);
+//payment
+router.use("/payment",paymentRouter);
 
 export { router as apiRouter };
