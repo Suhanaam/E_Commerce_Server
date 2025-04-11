@@ -16,8 +16,8 @@ router.post("/create-checkout-session", authUser, async (req, res, next) => {
             price_data: {
                 currency: "inr",
                 product_data: {
-                    name: p?.product?.title,
-                    images: [p?.product?.images],
+                    name: p?.product?.name,
+                    images: [p?.product?.images?.[0] || "https://via.placeholder.com/150"],
                 },
                 unit_amount: Math.round(p?.product?.price * 100),
             },
@@ -34,6 +34,8 @@ router.post("/create-checkout-session", authUser, async (req, res, next) => {
 
         res.json({ success: true, sessionId: session.id });
     } catch (error) {
+        console.error("Stripe error:", error);
+
         res.status(error.status || 500).json({ error: error.message || "Internal server Error" });
     }
 });
