@@ -10,7 +10,7 @@ const router = express.Router();
 router.post("/create-checkout-session", authUser, async (req, res, next) => {
     try {
         const { products } = req.body;
-        console.log(products);
+        console.log("products.........",products);
 
         const lineItems = products.map((p) => ({
             price_data: {
