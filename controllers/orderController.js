@@ -102,3 +102,76 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//seller order
+export const getOrdersForSeller = async (req, res) => {
+  try {
+    const sellerId = req.user.id; // ensure seller is authenticated
+
+    const orders = await Order.find({ "items.product": { $exists: true } })
+      .populate("items.product")
+      .populate("user");
+
+    const sellerOrders = orders
+      .map((order) => {
+        const sellerItems = order.items.filter(
+          (item) => item.product.seller.toString() === sellerId
+        );
+        if (sellerItems.length === 0) return null;
+        return {
+          _id: order._id,
+          user: order.user,
+          deliveryStatus: order.deliveryStatus,
+          paymentStatus: order.paymentStatus,
+          createdAt: order.createdAt,
+          items: sellerItems,
+        };
+      })
+      .filter(Boolean);
+
+    res.status(200).json(sellerOrders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch seller orders" });
+  }
+};
+
+
+
+//update delivery status
+
+export const getDeliveryStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body; // new status to be set
+    const sellerId = req.user.id;
+
+    // Valid statuses for security
+    const validStatuses = ["Processing", "Shipped", "Delivered", "Cancelled"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid delivery status value" });
+    }
+
+    const order = await Order.findById(orderId).populate("items.product");
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const hasSellerItems = order.items.some(
+      (item) => item.product.seller.toString() === sellerId
+    );
+
+    if (!hasSellerItems) {
+      return res.status(403).json({ message: "You cannot update this order" });
+    }
+
+    order.deliveryStatus = status;
+    await order.save();
+
+    res.status(200).json({ message: `Delivery status updated to ${status}` });
+  } catch (err) {
+    console.error("Error updating delivery status:", err);
+    res.status(500).json({ message: "Failed to update status" });
+  }
+};
