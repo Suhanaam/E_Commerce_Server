@@ -14,7 +14,7 @@ export const createOrder = async (req, res) => {
     const updatedItems = [];
 
     for (const item of items) {
-      const product = await Product.findById(item.product);
+      const product = await Product.findById(item.product).populate("seller");
       if (!product) {
         return res.status(404).json({ message: `Product not found: ${item.product}` });
       }
@@ -23,9 +23,11 @@ export const createOrder = async (req, res) => {
       totalAmount += itemPrice;
 
       updatedItems.push({
-        product: item.product,
+        product: product._id,
         quantity: item.quantity,
         price: product.price,
+        seller: product.seller, // 👈 Add seller here
+        productDeliveryStatus: "Pending", // 👈 Default status
       });
     }
 
@@ -35,7 +37,7 @@ export const createOrder = async (req, res) => {
       items: updatedItems,
       totalAmount,
       deliveryAddress,
-      paymentStatus: "Paid", // Assuming payment is done
+      paymentStatus: "Paid",
       deliveryStatus: "Pending",
     });
 
@@ -45,6 +47,7 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get orders by user
 export const getUserOrders = async (req, res) => {
@@ -140,7 +143,7 @@ export const getOrdersForSeller = async (req, res) => {
 
 //update delivery status
 
-export const getDeliveryStatus = async (req, res) => {
+export const updateSellerDeliveryStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body; // new status to be set

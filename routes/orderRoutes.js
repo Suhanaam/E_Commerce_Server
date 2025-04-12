@@ -10,7 +10,7 @@ import {
     updateDeliveryStatus, 
     deleteOrder, 
     getOrdersForSeller,
-    getDeliveryStatus
+    updateSellerDeliveryStatus
 } from "../controllers/orderController.js";
 
 const router = express.Router();
@@ -36,6 +36,6 @@ router.get("/seller-orders",authSeller,getOrdersForSeller);
 
 // update delivery status
 
-router.put("/update-delivery-status/:orderId",authSeller,getDeliveryStatus);
+router.put("/update-delivery-status/:orderId",authSeller,updateSellerDeliveryStatus);
 
 export { router as orderRouter };

@@ -26,8 +26,18 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
         },
-      },
+        seller: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User", // assuming sellers are also users
+        },
+        productDeliveryStatus: {
+          type: String,
+          enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+          default: "Pending",
+        },
+      }
     ],
+    
     totalAmount: {
       type: Number,
       required: true,
