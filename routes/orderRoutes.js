@@ -22,7 +22,7 @@ router.post("/create", authUser, createOrder);
 router.get("/user", authUser, getUserOrders);
 
 // Get all orders (Admin)
-router.get("/", authAdmin, getAllOrders);
+router.get("/all", authAdmin, getAllOrders);
 
 // Update delivery status (Admin)
 router.put("/:orderId", authAdmin, updateDeliveryStatus);

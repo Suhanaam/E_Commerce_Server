@@ -109,18 +109,23 @@ export const deleteOrder = async (req, res) => {
 //seller order
 export const getOrdersForSeller = async (req, res) => {
   try {
-    const sellerId = req.user.id; // ensure seller is authenticated
+    const sellerId = req.user.id;
 
     const orders = await Order.find({ "items.product": { $exists: true } })
-      .populate("items.product")
-      .populate("user");
+      .populate("items.product", "name images seller")
+      .populate("user", "name email");
 
     const sellerOrders = orders
       .map((order) => {
         const sellerItems = order.items.filter(
-          (item) => item.product.seller.toString() === sellerId
+          (item) =>
+            item.product &&
+            item.product.seller &&
+            item.product.seller.toString() === sellerId
         );
+
         if (sellerItems.length === 0) return null;
+
         return {
           _id: order._id,
           user: order.user,
@@ -134,7 +139,7 @@ export const getOrdersForSeller = async (req, res) => {
 
     res.status(200).json(sellerOrders);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching seller orders:", err);
     res.status(500).json({ message: "Failed to fetch seller orders" });
   }
 };
