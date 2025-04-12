@@ -2,6 +2,8 @@ import { Seller } from "../models/sellerModel.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.js";
 import { cloudinaryInstance } from "../config/cloudinary.js";
+import { Order } from "../models/orderModel.js";
+import { Product } from "../models/productModel.js";
 const NODE_ENV=process.env.NODE_ENV
 
 
@@ -126,5 +128,35 @@ export const getAllSellers = async (req, res) => {
     res.json({ data: sellers, message: "All sellers fetched successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+export const acceptProduct = async (req, res) => {
+  const { orderId, productId } = req.params;
+  try {
+    const order = await Order.findById(orderId).populate('items.product');
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const product = order.items.find(item => item.product._id.toString() === productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found in order" });
+    }
+
+    // Update product status to 'Processing' (the field is productDeliveryStatus)
+    product.productDeliveryStatus = "Processing";
+    await order.save();
+
+    // Optionally, check if all products are processed
+    const allProcessed = order.items.every(item => item.productDeliveryStatus === "Processing");
+    if (allProcessed) {
+      await Order.updateOne({ _id: orderId }, { $set: { deliveryStatus: "Processing" } });
+    }
+
+    return res.status(200).json({ message: "Product accepted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };

@@ -6,6 +6,7 @@ import {
   sellerUpdate,
   sellerLogout,
   getAllSellers,
+  acceptProduct,
 } from "../controllers/sellerController.js";
 import { authSeller } from "../middlewares/authSeller.js";
 import { upload } from "../middlewares/multer.js";
@@ -28,21 +29,23 @@ router.get("/logout", sellerLogout);
 router.get("/AllSellers",getAllSellers)
 
 // Seller Route to accept product
-router.put("/order/:orderId/product/:productId/accept", async (req, res) => {
-  try {
-    const { orderId, productId } = req.params;
+router.put("/order/:orderId/product/:productId/accept", acceptProduct);
+  
+//   async (req, res) => {
+//   try {
+//     const { orderId, productId } = req.params;
 
-    // Seller accepts the product
-    await Order.updateOne(
-      { "_id": orderId, "items.product": productId },
-      { $set: { "items.$.product.deliveryStatus": "processing" } }
-    );
+//     // Seller accepts the product
+//     await Order.updateOne(
+//       { "_id": orderId, "items.product": productId },
+//       { $set: { "items.$.product.productDeliveryStatus": "processing" } }
+//     );
 
-    res.status(200).json({ message: "Product accepted by seller." });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+//     res.status(200).json({ message: "Product accepted by seller." });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // Seller Route to ship product
 router.put("/order/:orderId/product/:productId/ship", async (req, res) => {
@@ -52,7 +55,7 @@ router.put("/order/:orderId/product/:productId/ship", async (req, res) => {
     // Seller ships the product
     await Order.updateOne(
       { "_id": orderId, "items.product": productId },
-      { $set: { "items.$.product.deliveryStatus": "shipped" } }
+      { $set: { "items.$.product.productDeliveryStatus": "shipped" } }
     );
 
     res.status(200).json({ message: "Product shipped by seller." });
