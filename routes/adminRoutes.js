@@ -10,6 +10,9 @@ import {
     deleteSeller,
     getAdminProfile
 } from "../controllers/adminController.js";
+import { Order } from "../models/orderModel.js";
+import { Product } from "../models/productModel.js";
+
 
 const router = express.Router();
 
