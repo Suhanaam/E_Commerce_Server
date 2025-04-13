@@ -145,7 +145,9 @@ router.put("/order/:orderId/set-delivered", async (req, res) => {
 
   try {
     const order = await Order.findById(orderId);
-    if (!order) return res.status(404).json({ message: "Order not found." });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found." });
+    }
 
     if (order.deliveryStatus === "Delivered") {
       return res.status(400).json({ message: "Order is already delivered." });
@@ -155,7 +157,7 @@ router.put("/order/:orderId/set-delivered", async (req, res) => {
       { _id: orderId },
       {
         $set: {
-          deliveryStatus: "Delivered",
+          deliveryStatus: "Delivered", // ✅ corrected this line
           "items.$[].productDeliveryStatus": "Delivered",
         },
       }
@@ -163,9 +165,11 @@ router.put("/order/:orderId/set-delivered", async (req, res) => {
 
     res.status(200).json({ message: "Order marked as delivered." });
   } catch (error) {
+    console.error("Error marking order as delivered:", error); // Optional for debugging
     res.status(500).json({ message: "Error marking order as delivered." });
   }
 });
+
 
 //cancel order
 
@@ -174,7 +178,9 @@ router.put("/order/:orderId/cancel", async (req, res) => {
 
   try {
     const order = await Order.findById(orderId);
-    if (!order) return res.status(404).json({ message: "Order not found." });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found." });
+    }
 
     if (order.deliveryStatus === "Cancelled") {
       return res.status(400).json({ message: "Order is already cancelled." });
@@ -184,7 +190,7 @@ router.put("/order/:orderId/cancel", async (req, res) => {
       { _id: orderId },
       {
         $set: {
-          deliveryStatus: "Cancelled",
+          deliveryStatus: "Cancelled", // ✅ corrected this line
           "items.$[].productDeliveryStatus": "Cancelled",
         },
       }
@@ -192,9 +198,11 @@ router.put("/order/:orderId/cancel", async (req, res) => {
 
     res.status(200).json({ message: "Order cancelled successfully." });
   } catch (error) {
+    console.error("Error cancelling order:", error); // Optional for debugging
     res.status(500).json({ message: "Error cancelling order." });
   }
 });
+
 
 
 
