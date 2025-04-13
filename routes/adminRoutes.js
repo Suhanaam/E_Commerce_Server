@@ -67,57 +67,73 @@ router.get("/order/:orderId/check-processing", async (req, res) => {
 });
 
 // Admin Route to set order status to processing
-router.put("/order/:orderId/set-processing", async (req, res) => {
-  try {
-    const { orderId } = req.params;
+// router.put("/order/:orderId/set-processing", async (req, res) => {
+//   try {
+//     const { orderId } = req.params;
 
-    // Ensure all products are in "processing" before setting the order to "processing"
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found." });
-    }
+//     // Ensure all products are in "processing" before setting the order to "processing"
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res.status(404).json({ message: "Order not found." });
+//     }
 
-    const allProcessed = order.items.every(
-      (item) => item.productDeliveryStatus === "processing"
-    );
+//     const allProcessed = order.items.every(
+//       (item) => item.productDeliveryStatus === "processing"
+//     );
 
-    if (!allProcessed) {
-      return res.status(400).json({ message: "Not all products are in processing." });
-    }
+//     if (!allProcessed) {
+//       return res.status(400).json({ message: "Not all products are in processing." });
+//     }
 
-    // Update order deliveryStatus to "processing"
-    await Order.updateOne({ _id: orderId }, { $set: { deliveryStatus: "processing" } });
+//     // Update order deliveryStatus to "processing"
+//     await Order.updateOne({ _id: orderId }, { $set: { deliveryStatus: "processing" } });
 
-    res.status(200).json({ message: "Order set to processing." });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+//     res.status(200).json({ message: "Order set to processing." });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // Admin Route to set order status to shipped
 router.put("/order/:orderId/set-shipped", async (req, res) => {
+  const { orderId } = req.params;
+  const order = await Order.findById(orderId);
+  if (!order) return res.status(404).json({ message: "Order not found." });
+
+  if (order.deliveryStatus === "shipped") {
+    return res.status(400).json({ message: "Order is already shipped." });
+  }
+
+  await Order.updateOne(
+    { _id: orderId },
+    {
+      $set: {
+        deliveryStatus: "shipped",
+        "items.$[].productDeliveryStatus": "Shipped",
+      },
+    }
+  );
+
+  res.status(200).json({ message: "Order marked as shipped." });
+});
+// Update deliveryStatus of order manually from frontend logic
+router.put("/order/:orderId/set-delivery-status", async (req, res) => {
   try {
     const { orderId } = req.params;
+    const { status } = req.body;
 
-    // Ensure that the order is not already "shipped"
     const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found." });
-    }
+    if (!order) return res.status(404).json({ message: "Order not found." });
 
-    if (order.deliveryStatus === "shipped") {
-      return res.status(400).json({ message: "Order is already shipped." });
-    }
+    order.deliveryStatus = status;
+    await order.save();
 
-    // Update order deliveryStatus to "shipped"
-    await Order.updateOne({ _id: orderId }, { $set: { deliveryStatus: "shipped" } });
-
-    res.status(200).json({ message: "Order set to shipped." });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(200).json({ message: "Order delivery status updated." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
-  
+
 
 
 export { router as adminRouter };
