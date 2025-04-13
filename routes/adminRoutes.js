@@ -116,6 +116,12 @@ router.put("/order/:orderId/set-shipped", async (req, res) => {
     }
   );
 
+  await Order.findByIdAndUpdate(orderId, {
+    deliveryStatus: "Shipped",
+  });
+  order.deliveryStatus = "shipped"
+  await order.save();
+
   res.status(200).json({ message: "Order marked as shipped." });
 });
 
@@ -162,7 +168,8 @@ router.put("/order/:orderId/set-delivered", async (req, res) => {
         },
       }
     );
-
+    order.deliveryStatus = "Delivered";
+    await order.save();
     res.status(200).json({ message: "Order marked as delivered." });
   } catch (error) {
     console.error("Error marking order as delivered:", error); // Optional for debugging
@@ -195,6 +202,8 @@ router.put("/order/:orderId/cancel", async (req, res) => {
         },
       }
     );
+    order.deliveryStatus = "Cancelled";
+    await order.save();
 
     res.status(200).json({ message: "Order cancelled successfully." });
   } catch (error) {
