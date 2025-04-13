@@ -94,6 +94,8 @@ router.get("/order/:orderId/check-processing", async (req, res) => {
 //   }
 // });
 
+
+
 // Admin Route to set order status to shipped
 router.put("/order/:orderId/set-shipped", async (req, res) => {
   const { orderId } = req.params;
@@ -116,6 +118,8 @@ router.put("/order/:orderId/set-shipped", async (req, res) => {
 
   res.status(200).json({ message: "Order marked as shipped." });
 });
+
+
 // Update deliveryStatus of order manually from frontend logic
 router.put("/order/:orderId/set-delivery-status", async (req, res) => {
   try {
@@ -133,6 +137,65 @@ router.put("/order/:orderId/set-delivery-status", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+//mark delivered order
+
+router.put("/order/:orderId/set-delivered", async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found." });
+
+    if (order.deliveryStatus === "Delivered") {
+      return res.status(400).json({ message: "Order is already delivered." });
+    }
+
+    await Order.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          deliveryStatus: "Delivered",
+          "items.$[].productDeliveryStatus": "Delivered",
+        },
+      }
+    );
+
+    res.status(200).json({ message: "Order marked as delivered." });
+  } catch (error) {
+    res.status(500).json({ message: "Error marking order as delivered." });
+  }
+});
+
+//cancel order
+
+router.put("/order/:orderId/cancel", async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found." });
+
+    if (order.deliveryStatus === "Cancelled") {
+      return res.status(400).json({ message: "Order is already cancelled." });
+    }
+
+    await Order.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          deliveryStatus: "Cancelled",
+          "items.$[].productDeliveryStatus": "Cancelled",
+        },
+      }
+    );
+
+    res.status(200).json({ message: "Order cancelled successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Error cancelling order." });
+  }
+});
+
 
 
 
