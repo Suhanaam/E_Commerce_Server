@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/add", authUser, addReview);
 router.get("/:productId", getReviews);
 router.get("/all",authAdmin,getAllReviews);
-router.get("/my-reviews", authUser, getReviewsByUser);
+router.get("/my-reviews", getReviewsByUser);
 router.put("/update/:reviewId", authUser, updateReview);
 router.delete("/delete/:reviewId", authUser, deleteReview);
 router.get("/seller-reviews", authSeller, getSellerProductReviews);
