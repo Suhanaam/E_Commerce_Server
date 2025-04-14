@@ -1,4 +1,10 @@
 import { Review } from "../models/reviewModel.js";
+import { Product } from "../models/productModel.js";
+import { Seller } from "../models/sellerModel.js";
+import { Admin } from "../models/adminModel.js";
+import { User } from "../models/userModel.js";
+import { Order } from "../models/orderModel.js";
+
 
 export const addReview = async (req, res) => {
   try {
@@ -37,7 +43,10 @@ export const getReviews = async (req, res) => {
 // user view reviews
 export const getReviewsByUser = async (req, res) => {
   try {
+    console.log("Fetching reviews for user:", req.user);
     const userId = req.user._id; // assuming user is authenticated
+    console.log("Fetching reviews for user id:", req.user._id);
+     
     const reviews = await Review.find({ user: userId }).populate("product");
     res.status(200).json(reviews);
   } catch (error) {
@@ -90,7 +99,10 @@ export const updateReview = async (req, res) => {
   export const getSellerProductReviews = async (req, res) => {
     try {
       const sellerId = req.user._id;
-  
+      console.log("Fetching reviews for user id:", req.user._id);
+
+      console.log("Fetching reviews for user id:", sellerId);
+    
       // Find all products of the seller
       const sellerProducts = await Product.find({ seller: sellerId }).select("_id");
   
