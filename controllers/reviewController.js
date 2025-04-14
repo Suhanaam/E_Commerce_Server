@@ -1,15 +1,27 @@
 import { Review } from "../models/reviewModel.js";
 
 export const addReview = async (req, res) => {
-    try {
-        const { product, rating, comment } = req.body;
-        const review = new Review({ user: req.user.id, product, rating, comment });
-        await review.save();
-        res.status(201).json({ message: "Review added successfully", review });
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+  try {
+    const { product, rating, comment } = req.body;
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized. User not found in request." });
     }
+
+    const review = new Review({
+      user: req.user.id,
+      product,
+      rating,
+      comment,
+    });
+
+    await review.save();
+    res.status(201).json({ message: "Review added successfully", review });
+  } catch (error) {
+    console.error("Error creating review:", error); // ✅ log actual error
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
+
 
 export const getReviews = async (req, res) => {
     try {
