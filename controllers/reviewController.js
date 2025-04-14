@@ -26,6 +26,7 @@ export const addReview = async (req, res) => {
 export const getReviews = async (req, res) => {
     try {
         const reviews = await Review.find({ product: req.params.productId }).populate("user", "name");
+        console.log("hi");
         res.status(200).json({ reviews });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
@@ -33,7 +34,7 @@ export const getReviews = async (req, res) => {
 };
 
 
-
+// user view reviews
 export const getReviewsByUser = async (req, res) => {
   try {
     const userId = req.user._id; // assuming user is authenticated
@@ -85,6 +86,7 @@ export const updateReview = async (req, res) => {
     }
   };
   
+  //seller reviews
   export const getSellerProductReviews = async (req, res) => {
     try {
       const sellerId = req.user._id;
@@ -115,7 +117,7 @@ export const getAllReviews = async (req, res) => {
     const reviews = await Review.find()
       .populate("user", "name email")
       .populate("product", "name");
-
+    console.log("hi helo");
     res.status(200).json(reviews);
   } catch (error) {
     console.error("Failed to fetch reviews:", error);
