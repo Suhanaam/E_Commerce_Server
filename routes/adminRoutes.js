@@ -102,7 +102,7 @@ router.put("/order/:orderId/set-shipped", async (req, res) => {
   const order = await Order.findById(orderId);
   if (!order) return res.status(404).json({ message: "Order not found." });
 
-  if (order.deliveryStatus === "shipped") {
+  if (order.deliveryStatus === "Shipped") {
     return res.status(400).json({ message: "Order is already shipped." });
   }
 
@@ -110,16 +110,14 @@ router.put("/order/:orderId/set-shipped", async (req, res) => {
     { _id: orderId },
     {
       $set: {
-        deliveryStatus: "shipped",
+        deliveryStatus: "Shipped",
         "items.$[].productDeliveryStatus": "Shipped",
       },
     }
   );
 
-  await Order.findByIdAndUpdate(orderId, {
-    deliveryStatus: "Shipped",
-  });
-  order.deliveryStatus = "shipped"
+  
+  order.deliveryStatus = "Shipped"
   await order.save();
 
   res.status(200).json({ message: "Order marked as shipped." });
