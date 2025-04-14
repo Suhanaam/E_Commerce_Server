@@ -107,7 +107,7 @@ export const updateReview = async (req, res) => {
   
   // admin view all reviews
 
-  import { Review } from "../models/Review.js";
+
 
 // Get all reviews (Admin only)
 export const getAllReviews = async (req, res) => {
