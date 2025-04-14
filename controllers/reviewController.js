@@ -105,3 +105,21 @@ export const updateReview = async (req, res) => {
     }
   };
   
+  // admin view all reviews
+
+  import { Review } from "../models/Review.js";
+
+// Get all reviews (Admin only)
+export const getAllReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find()
+      .populate("user", "name email")
+      .populate("product", "name");
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    console.error("Failed to fetch reviews:", error);
+    res.status(500).json({ message: "Failed to fetch reviews" });
+  }
+};
+
