@@ -40,6 +40,21 @@ export const getReviews = async (req, res) => {
 };
 
 
+export const getUserReviews = async (req, res) => {
+  try {
+    const review = await Review.find({ user: req.user.id }).populate("product");
+    res.status(200).json(review);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+
+
+
 // user view reviews
 export const getReviewsByUser = async (req, res) => {
   try {

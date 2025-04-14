@@ -116,6 +116,7 @@ export const userLogin=async(req,res,next)=>{
         secure:NODE_ENV==="production",
         httpOnly:NODE_ENV==="production",
        });
+       console.log(userExist.role)
        console.log("login success");
 
        //DELETE PASSWORD FROM OBJRECT RESPONSE:
