@@ -8,7 +8,8 @@ import {
     getAllOrders,
     deleteUser,
     deleteSeller,
-    getAdminProfile
+    getAdminProfile,
+    changeAdminPassword
 } from "../controllers/adminController.js";
 import { Order } from "../models/orderModel.js";
 import { Product } from "../models/productModel.js";
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router.post("/register", registerAdmin);
 router.post("/login", loginAdmin);
+router.put("/change-password",authAdmin,changeAdminPassword);
 router.get("/users", authAdmin, getAllUsers);
 router.get("/sellers", authAdmin, getAllSellers);
 router.get("/orders", authAdmin, getAllOrders);

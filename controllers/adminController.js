@@ -125,3 +125,34 @@ export const getAdminProfile = async (req, res) => {
         res.status(500).json({ message: "Internal server error." });
     }
 };
+
+// Change Admin Password
+export const changeAdminPassword = async (req, res) => {
+    try {
+        const adminId = req.user.id; // set by auth middleware
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: "Both current and new passwords are required." });
+        }
+
+        const admin = await Admin.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({ message: "Admin not found." });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, admin.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Current password is incorrect." });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        admin.password = hashedNewPassword;
+        await admin.save();
+
+        res.status(200).json({ message: "Password changed successfully." });
+    } catch (error) {
+        console.error("Error changing password:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+};
